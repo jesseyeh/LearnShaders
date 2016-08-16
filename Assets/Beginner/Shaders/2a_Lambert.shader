@@ -30,7 +30,7 @@
           vertexOutput o;
 
           // multiply the normal by the WorldToObject transpose
-          float3 normalDirection = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject)).xyz;
+          float3 normalDirection = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
           float3 lightDirection;
           float atten = 1.0;
 
@@ -39,8 +39,8 @@
 
           float3 diffuseReflection = atten * _LightColor0.xyz * _Color.rgb * max(0.0, dot(normalDirection, lightDirection));
 
-          o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
           o.col = float4(diffuseReflection, 1.0);
+          o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
           return o;
         }
 
