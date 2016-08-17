@@ -1,4 +1,4 @@
-﻿Shader "Beginner/1_Flat Color" {
+﻿Shader "AlexTelford/Beginner/1_Flat Color" {
 	Properties {
     _Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
