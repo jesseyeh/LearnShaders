@@ -1,4 +1,4 @@
-﻿Shader "MSLGiU/101/101e_Exercise2" {
+﻿Shader "MSLGiU/102/102d_SimpleBoxBlur" {
   Properties {
     _MainTex("Texture", 2D) = "white" {}
   }
@@ -10,13 +10,14 @@
     Pass {
       // SrcColor * SrcAlpha + DstColor * OneMinusSrcALpha
       Blend SrcAlpha OneMinusSrcAlpha
-      
+
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
 
       // user-defined vars
       sampler2D _MainTex;
+      float4 _MainTex_TexelSize;
 
       #include "UnityCG.cginc"
 
@@ -37,9 +38,17 @@
         return o;
       }
 
+      float4 box(sampler2D tex, float2 uv, float4 size) {
+        float4 c = tex2D(tex, uv + float2(-size.x, size.y)) + tex2D(tex, uv + float2(0, size.y)) + tex2D(tex, uv + float2(size.x, size.y)) +
+                   tex2D(tex, uv + float2(-size.x, 0)) + tex2D(tex, uv + float2(0, 0)) + tex2D(tex, uv + float2(size.x, 0)) +
+                   tex2D(tex, uv + float2(-size.x, -size.y)) + tex2D(tex, uv + float2(0, -size.y)) + tex2D(tex, uv + float2(size.x, -size.y));
+        
+        return c / 9;
+      }
+
       float4 frag(v2f i) : SV_Target {
-        float4 color = float4(i.uv.x, i.uv.y, 0, 1) * tex2D(_MainTex, i.uv);
-        return color;
+        float4 col = box(_MainTex, i.uv, _MainTex_TexelSize);
+        return col;
       }
 
       ENDCG

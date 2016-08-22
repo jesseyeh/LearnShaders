@@ -1,6 +1,8 @@
-﻿Shader "MSLGiU/101/101e_Exercise2" {
+﻿Shader "MSLGiU/102/102c_AnimatedDisplacement" {
   Properties {
     _MainTex("Texture", 2D) = "white" {}
+    _DisplacementTex("Displacement Texture", 2D) = "white" {}
+    _Magnitude("Magnitude", Range(0, 0.1)) = 1
   }
   SubShader {
     Tags {
@@ -10,13 +12,15 @@
     Pass {
       // SrcColor * SrcAlpha + DstColor * OneMinusSrcALpha
       Blend SrcAlpha OneMinusSrcAlpha
-      
+
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
 
       // user-defined vars
       sampler2D _MainTex;
+      sampler2D _DisplacementTex;
+      float _Magnitude;
 
       #include "UnityCG.cginc"
 
@@ -38,8 +42,14 @@
       }
 
       float4 frag(v2f i) : SV_Target {
-        float4 color = float4(i.uv.x, i.uv.y, 0, 1) * tex2D(_MainTex, i.uv);
-        return color;
+        float2 distuv = float2(i.uv.x + _Time.x * 2, i.uv.y + _Time.x * 2);
+
+        float2 disp = tex2D(_DisplacementTex, distuv).xy;
+        // transform range from 0 to 1 -> -1 to 1
+        disp = ((disp * 2) - 1) * _Magnitude;
+
+        float4 col = tex2D(_MainTex, i.uv + disp);
+        return col;
       }
 
       ENDCG

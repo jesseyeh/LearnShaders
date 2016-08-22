@@ -1,4 +1,4 @@
-﻿Shader "MSLGiU/101/101e_Exercise2" {
+﻿Shader "MSLGiU/102/102a_UVColorMultiply" {
   Properties {
     _MainTex("Texture", 2D) = "white" {}
   }
@@ -10,7 +10,7 @@
     Pass {
       // SrcColor * SrcAlpha + DstColor * OneMinusSrcALpha
       Blend SrcAlpha OneMinusSrcAlpha
-      
+
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
