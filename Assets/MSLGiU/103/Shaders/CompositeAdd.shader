@@ -1,4 +1,4 @@
-﻿Shader "103/CompositeAdd"
+﻿Shader "MSLGiU/103/CompositeAdd"
 {
 	Properties
 	{

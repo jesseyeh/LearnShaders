@@ -1,4 +1,4 @@
-﻿Shader "103/ShowDepth"
+﻿Shader "MSLGiU/103/ShowDepth"
 {
 	Properties
 	{

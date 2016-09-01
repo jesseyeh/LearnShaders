@@ -1,4 +1,4 @@
-﻿Shader "103/QuickBlur"
+﻿Shader "MSLGiU/103/QuickBlur"
 {
 	Properties
 	{
