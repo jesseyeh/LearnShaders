@@ -94,6 +94,7 @@
       }
 
       fixed4 frag(v2f i) : SV_Target {
+        /**
         fixed4 transit = tex2D(_TransitionTex, i.uv1);
 
         fixed2 direction = float2(0, 0);
@@ -101,8 +102,9 @@
           direction = normalize(float2((transit.r - 0.5) * 2, (transit.g - 0.5) * 2));
         }
         fixed4 col  = tex2D(_MainTex, i.uv + _Cutoff * direction);
-
-        if(transit.b < _Cutoff)
+        */
+        fixed4 col = tex2D(_MainTex, i.uv);
+        //if(transit.b < _Cutoff)
           return col = lerp(col, _Color, _Fade);
 
         return col;
