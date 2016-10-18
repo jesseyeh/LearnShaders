@@ -1,4 +1,4 @@
-﻿Shader "Custom/LitVertexDisplacement" {
+﻿Shader "ConeWars/LitVertexDisplacement" {
     Properties {
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -24,8 +24,8 @@
 
         struct Input {
             float2 uv_MainTex;
-        };
-
+        }
+;
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;

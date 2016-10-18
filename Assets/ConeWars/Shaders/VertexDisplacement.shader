@@ -1,4 +1,4 @@
-﻿Shader "Unlit/VertexDisplacement"
+﻿Shader "ConeWars/VertexDisplacement"
 {
     Properties
     {
