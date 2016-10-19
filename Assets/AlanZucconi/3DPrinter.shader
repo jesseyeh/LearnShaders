@@ -5,12 +5,14 @@
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 
-		_ConstructY("Construct Y", Range(0.0, 1.0)) = 0.0
+		_ConstructY("Construct Y", Range(0.0, 2.0)) = 0.0
+		_ConstructGap("Construct Gap", Range(0.0, 1.0)) = 0.0
 		_ConstructColor("Construct Color", Color) = (1, 1, 1, 1)
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
 		LOD 200
+		Cull Off
 		
 		CGPROGRAM
 		#include "UnityPBSLighting.cginc"
@@ -26,6 +28,7 @@
 		struct Input {
 			float2 uv_MainTex;
 			float3 worldPos;
+			float3 viewDir;
 		};
 
 		half _Glossiness;
@@ -34,15 +37,22 @@
 
 		float _ConstructY;
 		fixed4 _ConstructColor;
+		float _ConstructGap;
 
 		int building;
+		float3 viewDir;
 
 		//---------------------------------------------------------------------
 		inline half4 LightingCustom(SurfaceOutputStandard s, half3 lightDir, UnityGI gi) {
-			if(!building) {
-				return LightingStandard(s, lightDir, gi);
+			if(building) {
+				return _ConstructColor;
 			}
-			return _ConstructColor;
+			// triangle facing away from camera
+			if(dot(s.Normal, viewDir) < 0) {
+				return _ConstructColor;
+			}
+
+			return LightingStandard(s, lightDir, gi);
 		}
 		inline void LightingCustom_GI(SurfaceOutputStandard s, UnityGIInput data, inout UnityGI gi) {
 			LightingStandard_GI(s, data, gi);
@@ -50,6 +60,12 @@
 
 		//---------------------------------------------------------------------
 		void surf(Input IN, inout SurfaceOutputStandard o) {
+			viewDir = IN.viewDir;
+
+			float s = +sin((IN.worldPos.x * IN.worldPos.z) * 60 + _Time[3] + o.Normal) / 120;
+			if(IN.worldPos.y > _ConstructY + s + _ConstructGap) {
+				discard;
+			}
 			if(IN.worldPos.y < _ConstructY) {
 				fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 				o.Albedo = c.rgb;
