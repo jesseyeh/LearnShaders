@@ -13,8 +13,10 @@
 		LOD 200
 		
 		CGPROGRAM
+		#include "UnityPBSLighting.cginc"
+
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows
+		#pragma surface surf Custom fullforwardshadows
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -33,15 +35,33 @@
 		float _ConstructY;
 		fixed4 _ConstructColor;
 
-		void surf (Input IN, inout SurfaceOutputStandard o) {
+		int building;
+
+		//---------------------------------------------------------------------
+		inline half4 LightingCustom(SurfaceOutputStandard s, half3 lightDir, UnityGI gi) {
+			if(!building) {
+				return LightingStandard(s, lightDir, gi);
+			}
+			return _ConstructColor;
+		}
+		inline void LightingCustom_GI(SurfaceOutputStandard s, UnityGIInput data, inout UnityGI gi) {
+			LightingStandard_GI(s, data, gi);
+		}
+
+		//---------------------------------------------------------------------
+		void surf(Input IN, inout SurfaceOutputStandard o) {
 			if(IN.worldPos.y < _ConstructY) {
 				fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 				o.Albedo = c.rgb;
 				o.Alpha = c.a;
+
+				building = 0;
 			}
 			else {
 				o.Albedo = _ConstructColor.rgb;
 				o.Alpha = _ConstructColor.a;
+
+				building = 1;
 			}
 
 			// Metallic and smoothness come from slider variables
