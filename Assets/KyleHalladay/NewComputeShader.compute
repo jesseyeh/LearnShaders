@@ -1,0 +1,32 @@
+﻿// this specifies the entry point to the program (kind of like a main function)
+#pragma kernel CSMain
+#pragma kernel Multiply
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+// structured buffers are arrays consisting of a single data type, including structs
+StructuredBuffer<float> floatBuffer;
+RWStructuredBuffer<int> readWriteIntBuffer;
+
+struct VecMatPair {
+	float3 pos;
+	float4x4 mat;
+};
+RWStructuredBuffer<VecMatPair> dataBuffer;
+
+// this specifies the dimensions of the thread groups spawned
+// in this case, we specify that we want each group of threads to contain 64 threads
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+
+	Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}
+
+[numthreads(16, 1, 1)]
+void Multiply(uint3 id : SV_DispatchThreadID) {
+	dataBuffer[id.x].pos = mul(dataBuffer[id.x].mat, float4(dataBuffer[id.x].pos, 1.0));
+}
